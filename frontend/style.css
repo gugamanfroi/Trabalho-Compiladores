@@ -22,8 +22,8 @@ body { margin: 0; font-family: var(--sans); color: var(--tinta); background: var
 .linguagem { margin: 4px 0 0; color: #c5d0db; font-size: 0.95rem; }
 .linguagem strong { color: var(--destaque); }
 
-.painel { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 24px; padding: 24px clamp(16px, 4vw, 40px); max-width: 1280px; margin: 0 auto; }
-@media (max-width: 860px) { .painel { grid-template-columns: 1fr; } }
+.painel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; padding: 24px clamp(16px, 4vw, 40px); max-width: 1400px; margin: 0 auto; }
+@media (max-width: 960px) { .painel { grid-template-columns: minmax(0, 1fr); } }
 
 h2 { margin: 0 0 12px; font-size: 1.1rem; }
 .editor, .resultados { background: var(--painel); border: 1px solid var(--linha); border-radius: 6px; padding: 18px; }
@@ -70,3 +70,111 @@ dt { color: #3c5547; } dd { margin: 0; font-weight: 700; font-variant-numeric: t
 
 .rodape { text-align: center; color: #5a6978; font-size: 0.85rem; padding: 8px 16px 28px; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ===== Etapa 3: análise léxica ===== */
+/* --c-dark: cor sobre fundo escuro (código); --c-light: cor sobre fundo claro (crachás). */
+.tk-PALAVRA_RESERVADA { --c-dark: #d0a2ff; --c-light: #6f2fa0; }
+.tk-IDENTIFICADOR     { --c-dark: #8fb8ff; --c-light: #1d4f9c; }
+.tk-LITERAL_INTEIRO   { --c-dark: #ffa479; --c-light: #a6410f; }
+.tk-LITERAL_REAL      { --c-dark: #ffd36b; --c-light: #8a5a00; }
+.tk-LITERAL_STRING    { --c-dark: #b5e88a; --c-light: #2c6a0e; }
+.tk-OPERADOR          { --c-dark: #7fe3f5; --c-light: #0b6b7c; }
+.tk-DELIMITADOR       { --c-dark: #c4cdd6; --c-light: #4a5663; }
+.tk-NOVA_LINHA, .tk-INDENTACAO, .tk-DESINDENTACAO, .tk-FIM_ARQUIVO { --c-dark: #8a98a6; --c-light: #5b6773; }
+
+#resultado { padding-bottom: 8px; }
+#resultado[data-estado="erro-lexico"] { border-left-color: var(--destaque-escuro); background: var(--aviso-fundo); color: var(--tinta); }
+#resultado[data-estado="sucesso"] { color: var(--tinta); }
+.resultado-msg { margin-bottom: 6px !important; }
+dl.numeros { grid-template-columns: repeat(4, auto); justify-content: start; gap: 2px 18px; }
+dl.numeros dt { grid-row: 1; font-size: 0.78rem; color: #4b5a68; }
+dl.numeros dd { grid-row: 2; font-size: 1.05rem; }
+dl.numeros dt:nth-of-type(1), dl.numeros dd:nth-of-type(1) { grid-column: 1; }
+dl.numeros dt:nth-of-type(2), dl.numeros dd:nth-of-type(2) { grid-column: 2; }
+dl.numeros dt:nth-of-type(3), dl.numeros dd:nth-of-type(3) { grid-column: 3; }
+dl.numeros dt:nth-of-type(4), dl.numeros dd:nth-of-type(4) { grid-column: 4; }
+@media (max-width: 520px) { dl.numeros { grid-template-columns: repeat(2, auto); }
+  dl.numeros dt, dl.numeros dd { grid-row: auto !important; grid-column: auto !important; }
+  dl.numeros { grid-template-columns: auto 1fr; } }
+
+.erros { margin: 10px 0; background: var(--erro-fundo); border: 1px solid #e3b4b7; border-radius: 4px; padding: 8px 12px; color: var(--erro); }
+.erros h3 { margin: 0 0 6px; font-size: 0.95rem; }
+.erros-lista { list-style: none; margin: 0; padding: 0; }
+.erros-lista li { display: flex; gap: 10px; align-items: baseline; padding: 4px 0; border-top: 1px dashed #e3b4b7; }
+.erros-lista li:first-child { border-top: 0; }
+.erro-lexema { background: #fff; border: 1px solid #e3b4b7; border-radius: 3px; padding: 0 5px; font-family: var(--mono); white-space: pre; flex: none; max-width: 40%; overflow: hidden; text-overflow: ellipsis; }
+.erro-msg { font-size: 0.9rem; color: var(--tinta); }
+
+.chk { display: inline-block; margin: 8px 0 4px; font-size: 0.88rem; cursor: pointer; }
+.abas { display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 2px solid var(--linha); margin-top: 6px; }
+.aba { background: transparent; color: #3b4a58; border: 1px solid transparent; border-bottom: 0; border-radius: 4px 4px 0 0; padding: 7px 12px; font-weight: 600; font-size: 0.9rem; margin-bottom: -2px; }
+.aba:hover { background: var(--papel); }
+.aba[aria-selected="true"] { background: #fff; color: var(--tinta); border-color: var(--linha); border-bottom: 2px solid #fff; }
+.painel-aba { padding: 12px 0 0; }
+.painel-aba[hidden] { display: none; }
+.nota { font-size: 0.86rem; color: #3f4f5e; }
+#resultado .nota { margin: 6px 0 !important; }
+.sub { margin: 14px 0 6px; font-size: 0.88rem; }
+
+.legenda { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 12px; margin: 0 0 10px; padding: 0; font-size: 0.82rem; }
+.legenda-item { display: inline-flex; align-items: center; gap: 5px; }
+.legenda-item i { width: 11px; height: 11px; border-radius: 2px; background: var(--c-light); display: inline-block; }
+.legenda-item.erro-item { color: var(--erro); }
+.legenda-item.erro-item i { background: var(--erro); }
+
+/* código com linhas numeradas */
+.codigo-view { background: var(--editor-fundo); color: var(--editor-texto); border-radius: 4px; padding: 10px 0; font-family: var(--mono); font-size: 0.9rem; line-height: 1.65; overflow: auto; max-height: 360px; }
+.codigo-view .linha { display: flex; min-height: 1.65em; white-space: pre; padding-right: 12px; }
+.codigo-view .num { flex: none; width: 3ch; margin: 0 12px 0 10px; text-align: right; color: #5d6c7b; user-select: none; }
+.codigo-view .texto { white-space: pre; }
+.seg.tk-PALAVRA_RESERVADA, .seg.tk-IDENTIFICADOR, .seg.tk-LITERAL_INTEIRO, .seg.tk-LITERAL_REAL,
+.seg.tk-LITERAL_STRING, .seg.tk-OPERADOR, .seg.tk-DELIMITADOR, .seg.tk-INDENTACAO { color: var(--c-dark); }
+.seg.tk-PALAVRA_RESERVADA { font-weight: 700; }
+.seg.tk-INDENTACAO { background: rgba(255, 255, 255, 0.07); }
+.seg.comentario { color: #6b7d8d; font-style: italic; }
+.seg.marcador { color: #6b7d8d; margin-left: 2px; }
+.seg.erro-lexico { color: #fff; background: rgba(214, 56, 66, 0.55); text-decoration: underline wavy #ff8087; text-underline-offset: 3px; border-radius: 2px; }
+
+/* passo a passo */
+.codigo-view .seg.lido { opacity: 1; }
+.codigo-view .seg.pendente { opacity: 0.35; }
+.codigo-view .seg.atual { background: var(--destaque); color: var(--tinta); border-radius: 3px; outline: 2px solid var(--destaque); font-weight: 700; opacity: 1; }
+.codigo-view .seg.erro-lexico.atual { background: #d63842; color: #fff; outline-color: #d63842; }
+.controles-passo { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 8px 0; }
+button.pequeno { padding: 6px 11px; font-size: 0.85rem; }
+button:disabled { opacity: 0.45; cursor: not-allowed; }
+.controles-passo select { min-width: 0; padding: 5px 8px; font-size: 0.85rem; }
+.progresso { margin: 6px 0 !important; font-size: 0.85rem; font-weight: 600; color: #3f4f5e; }
+.cartao-passo { margin-top: 10px; background: #fff; border: 1px solid var(--linha); border-left: 5px solid var(--azul); border-radius: 4px; padding: 10px 14px; }
+.cartao-passo[data-erro="1"] { border-left-color: var(--erro); background: var(--erro-fundo); }
+.cartao-passo p { margin: 0 0 4px; }
+.cartao-titulo { font-weight: 700; }
+
+/* tabela e sequência */
+.tabela-scroll { overflow: auto; max-height: 340px; border: 1px solid var(--linha); border-radius: 4px; background: #fff; }
+table { border-collapse: collapse; width: 100%; font-size: 0.88rem; }
+th, td { padding: 5px 10px; text-align: left; border-bottom: 1px solid #e3e8ed; white-space: nowrap; }
+thead th { position: sticky; top: 0; background: var(--papel); z-index: 1; }
+td code, td .lexema { font-family: var(--mono); }
+.badge { display: inline-block; font-size: 0.75rem; font-weight: 700; padding: 1px 7px; border-radius: 10px; color: var(--c-light); border: 1px solid var(--c-light); background: #fff; }
+tr.clicavel { cursor: pointer; }
+tr.clicavel:hover { background: #f1f5f9; }
+.sequencia { display: flex; flex-wrap: wrap; gap: 4px; max-height: 120px; overflow: auto; }
+.chip { font-family: var(--mono); font-size: 0.8rem; padding: 1px 7px; border-radius: 3px; border: 1px solid var(--c-light); color: var(--c-light); background: #fff; white-space: pre; }
+.chip.mais { border-style: dashed; color: #4b5a68; border-color: #8a98a6; }
+
+/* ajuda */
+.ajuda { margin-top: 16px; border: 1px solid var(--linha); border-radius: 4px; padding: 8px 14px; background: #fafbfc; font-size: 0.92rem; }
+.ajuda summary { cursor: pointer; font-weight: 600; }
+.ajuda code { font-family: var(--mono); background: #eef1f4; padding: 0 4px; border-radius: 3px; }
+.mini th, .mini td { border: 1px solid var(--linha); }
+.mini { width: auto; margin: 6px 0; }
+
+@media (max-width: 560px) {
+  .editor, .resultados { padding: 12px; }
+  .aba { padding: 6px 9px; font-size: 0.82rem; }
+  textarea { min-height: 220px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .codigo-view .seg { transition: opacity 0.15s, background-color 0.15s; }
+}

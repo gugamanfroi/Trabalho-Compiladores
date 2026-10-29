@@ -25,9 +25,29 @@
     },
     {
       id: "erro",
-      titulo: "4. Com erro intencional",
-      descricao: "Operadores consecutivos (+*) — um erro que as próximas etapas deverão detectar.",
+      titulo: "4. Erro de sintaxe (não léxico)",
+      descricao: "Operadores consecutivos (+*): todos os tokens são válidos, então o scanner não reclama. Quem detectará este erro é o parser (Etapa 4).",
       codigo: "resultado = 10 +* 5\nprint(resultado)\n",
+    },
+    {
+      id: "tokens",
+      titulo: "5. Todas as categorias de token",
+      descricao: "Palavras reservadas, identificadores, inteiro e real, string, operadores compostos, delimitadores e comentário.",
+      codigo:
+        "# preço com desconto\npreco = 12.5\nnome = \"Ana\"\ntotal = (preco * 2) // 3 + 4 ** 2\n" +
+        "if total >= 10 and nome != \"Bia\":\n    total -= 1\n",
+    },
+    {
+      id: "erros-lexicos",
+      titulo: "6. Erros léxicos",
+      descricao: "Símbolo fora do subconjunto (@), identificador começando com dígito, string sem fechar e parêntese aberto.",
+      codigo: "valor = 10 @ 2\n12abc = 5\ntexto = \"sem fechar\ntotal = (1 + 2\n",
+    },
+    {
+      id: "indentacao",
+      titulo: "7. Blocos e indentação",
+      descricao: "Blocos aninhados: o recuo gera os tokens INDENTACAO e DESINDENTACAO.",
+      codigo: "n = 3\nwhile n > 0:\n    if n == 2:\n        n = n - 2\n    n = n - 1\nprint(n)\n",
     },
   ];
 });

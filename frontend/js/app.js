@@ -19,6 +19,7 @@
   }
 
   function mostrar(estado, titulo, detalhes) {
+    Resultado.parar();
     resultado.setAttribute("data-estado", estado);
     resultado.textContent = "";
     var t = document.createElement("p");
@@ -35,18 +36,8 @@
     return p;
   }
 
-  function mostrarSucesso(r) {
-    var est = (r.dados && r.dados.estatisticas) || {};
-    var dl = document.createElement("dl");
-    [["Linhas recebidas", est.linhas], ["Caracteres recebidos", est.caracteres]].forEach(function (par) {
-      var dt = document.createElement("dt"); dt.textContent = par[0];
-      var dd = document.createElement("dd"); dd.textContent = String(par[1]);
-      dl.appendChild(dt); dl.appendChild(dd);
-    });
-    mostrar("sucesso", r.mensagem, [
-      dl,
-      paragrafo("As análises léxica, sintática e semântica serão adicionadas nas próximas etapas.", "nota"),
-    ]);
+  function mostrarSucesso(r, codigoEnviado) {
+    Resultado.renderizar(resultado, codigoEnviado, r.dados);
   }
 
   function mostrarErro(r) {
@@ -67,10 +58,12 @@
 
     botao.disabled = true;
     botao.textContent = "Analisando…";
+    Resultado.parar();
     mostrar("carregando", "Enviando o código para o servidor…");
+    var codigoEnviado = campo.value;
     try {
-      var r = await Api.enviarCodigo(campo.value);
-      if (r.ok) mostrarSucesso(r); else mostrarErro(r);
+      var r = await Api.enviarCodigo(codigoEnviado);
+      if (r.ok) mostrarSucesso(r, codigoEnviado); else mostrarErro(r);
     } catch (e) {
       mostrarErro({ tipo: "erro_inesperado", mensagem: Validacao.MENSAGENS.erro_inesperado });
     } finally {

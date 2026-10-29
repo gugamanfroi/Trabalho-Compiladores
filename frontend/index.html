@@ -39,17 +39,42 @@
 
     <section class="resultados" aria-labelledby="titulo-resultado">
       <h2 id="titulo-resultado">Resultado</h2>
-      <div id="resultado" role="status" aria-live="polite" data-estado="inicial"></div>
+      <div id="resultado" data-estado="inicial" aria-live="polite"></div>
+
+      <details class="ajuda" id="ajuda-token">
+        <summary>O que é um token? E um lexema?</summary>
+        <p>A <strong>análise léxica</strong> é a primeira fase de um compilador. O <strong>scanner</strong> lê o código
+        caractere por caractere e o separa em pedaços com significado.</p>
+        <ul>
+          <li><strong>Lexema</strong>: o trecho exato do código, como <code>numero</code> ou <code>10</code>.</li>
+          <li><strong>Token</strong>: o lexema junto com a sua <em>categoria</em> (e a posição). Ex.: <code>numero</code> → <code>IDENTIFICADOR</code>.</li>
+        </ul>
+        <table class="mini">
+          <thead><tr><th>Código</th><th>Lexema</th><th>Token (categoria)</th></tr></thead>
+          <tbody>
+            <tr><td rowspan="3"><code>numero = 10</code></td><td><code>numero</code></td><td>IDENTIFICADOR</td></tr>
+            <tr><td><code>=</code></td><td>OPERADOR</td></tr>
+            <tr><td><code>10</code></td><td>LITERAL_INTEIRO</td></tr>
+          </tbody>
+        </table>
+        <p>Espaços e comentários (<code>#</code>) são ignorados. Em Python, porém, o <strong>fim da linha</strong> e o
+        <strong>recuo</strong> (indentação) fazem parte da gramática, então o scanner também gera os tokens
+        <code>NOVA_LINHA</code> (↵), <code>INDENTACAO</code> (⇥) e <code>DESINDENTACAO</code> (⇤).</p>
+        <p>O scanner <em>não</em> verifica se o programa faz sentido: <code>x = 10 +* 5</code> tem tokens válidos
+        (o erro é de sintaxe, tarefa da Etapa 4). Ele só reclama de símbolos que não consegue reconhecer, como <code>@</code>, <code>$</code> ou uma string sem aspa final.</p>
+      </details>
     </section>
   </main>
 
   <footer class="rodape">
-    Etapa 2 — o código é enviado ao servidor e validado. Análises léxica, sintática e semântica ainda não implementadas.
+    Etapa 3 — análise léxica (scanner) implementada. Análises sintática e semântica ainda não implementadas.
   </footer>
 
   <script src="js/validacao.js"></script>
   <script src="js/exemplos.js"></script>
   <script src="js/api.js"></script>
+  <script src="js/tokens.js"></script>
+  <script src="js/resultado.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
