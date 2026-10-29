@@ -32,14 +32,24 @@ def checar(nome, condicao):
 
 s, corpo = req("/")
 checar("frontend: GET / -> 200 com o título do sistema", s == 200 and "Compilador Educacional" in corpo)
-for arq in ["style.css", "js/validacao.js", "js/exemplos.js", "js/api.js", "js/app.js"]:
+for arq in ["style.css", "js/validacao.js", "js/exemplos.js", "js/api.js", "js/tokens.js", "js/resultado.js", "js/app.js"]:
     checar("frontend: arquivo estático %s -> 200" % arq, req("/" + arq)[0] == 200)
 s, corpo = req("/health")
 checar("proxy: GET /health chega ao backend", s == 200 and json.loads(corpo) == {"status": "ok"})
 s, corpo = req("/api/analisar", {"codigo": "numero = 10\nprint(numero)\n"})
 d = json.loads(corpo)
-checar("API: código válido -> 200, recebido=true, estatísticas corretas",
-       s == 200 and d["recebido"] is True and d["estatisticas"] == {"linhas": 2, "caracteres": 26})
+checar("API: código válido -> 200, recebido, sucesso léxico e estatísticas",
+       s == 200 and d["recebido"] is True and d["sucesso"] is True and d["erros"] == []
+       and d["estatisticas"] == {"linhas": 2, "caracteres": 26})
+checar("API: tokens com tipo, lexema, linha e coluna",
+       {"tipo": "IDENTIFICADOR", "lexema": "numero", "linha": 1, "coluna": 1} in d["tokens"]
+       and {"tipo": "LITERAL_INTEIRO", "lexema": "10", "linha": 1, "coluna": 10} in d["tokens"]
+       and d["tokens"][-1]["tipo"] == "FIM_ARQUIVO")
+s, corpo = req("/api/analisar", {"codigo": "a = 1 @ 2\n"})
+d = json.loads(corpo)
+checar("API: erro léxico -> 200, sucesso=false, erro localizado",
+       s == 200 and d["sucesso"] is False and len(d["erros"]) == 1
+       and (d["erros"][0]["lexema"], d["erros"][0]["linha"], d["erros"][0]["coluna"]) == ("@", 1, 7))
 s, corpo = req("/api/analisar", {"codigo": "   "})
 checar("API: somente espaços -> 422", s == 422 and json.loads(corpo)["erro"]["tipo"] == "entrada_somente_espacos")
 s, corpo = req("/api/analisar", {})
